@@ -83,6 +83,7 @@ def exercise03():
     
     print(compute_bill(grocery_list))
 
+
 def exercise04():
     # PART 01--------------------------------------------------
     llyod = {}
