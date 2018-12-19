@@ -1,2 +1,0 @@
-Hello foobar
-Line added and ammended to provious commit
