@@ -1,3 +1,7 @@
 # file used to test doing a amending a commit after it has been pushed to github
 
 01: initial commit 
+
+02: amed commit
+
+03: third commit
