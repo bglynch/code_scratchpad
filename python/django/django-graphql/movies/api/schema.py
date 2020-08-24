@@ -13,10 +13,10 @@ class MovieType(DjangoObjectType):
     def resolve_movie_age(self, info):
         return "Old Movie" if self.year < 2000 else "New Movie"
 
+
 class DirectorType(DjangoObjectType):
     class Meta:
         model = Director
-
 
 
 class Query(graphene.ObjectType):
@@ -41,3 +41,20 @@ class Query(graphene.ObjectType):
             return Movie.objects.get(title=title)
 
         return None
+
+
+class MovieCreateMutation(graphene.Mutation):
+    class Arguments:
+        title = graphene.String(required=True)
+        year = graphene.Int(required=True)
+
+    movie = graphene.Field(MovieType)
+
+    def mutate(self, info, title, year):
+        movie = Movie.objects.create(title=title, year=year)
+
+        return MovieCreateMutation(movie)
+
+
+class Mutation:
+    create_movie = MovieCreateMutation.Field()
