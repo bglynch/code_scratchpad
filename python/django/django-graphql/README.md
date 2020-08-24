@@ -1,3 +1,14 @@
+#Integrating GraphQL API with Django Framework
+
+## Tools Used
+[Django 3](https://www.djangoproject.com/)  
+[Graphene](https://graphene-python.org/): library for building GraphQL APIs in Python  
+[Django GraphQL JWT](https://django-graphql-jwt.domake.io/en/latest/): JSON Web Token authentication for Django GraphQL  
+[Relay](https://relay.dev/): production-ready GraphQL client for React  
+
+[django-filter](https://django-filter.readthedocs.io/en/stable/guide/install.html): Generic, reusable application to alleviate writing some of the more mundane bits of view code  
+
+
 ## How to Add GraphQL to Django Project
 install graphene  
 `pip install graphene-django`

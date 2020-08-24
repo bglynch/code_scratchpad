@@ -1,7 +1,9 @@
 import graphene
+from graphene import relay
 import graphql_jwt
 from graphene_django.types import DjangoObjectType
 from graphql_jwt.decorators import login_required
+from graphene_django.filter import DjangoFilterConnectionField
 
 from .models import Movie, Director
 
@@ -21,32 +23,47 @@ class DirectorType(DjangoObjectType):
         model = Director
 
 
+# just for relay implementation
+class MovieNode(DjangoObjectType):
+    class Meta:
+        model = Movie
+        filter_fields = {
+            'title': ['exact', 'icontains', 'istartswith'],
+            'year': ['exact']
+        }
+        interfaces = (relay.Node,)
+
+
 class Query(graphene.ObjectType):
-    all_movies = graphene.List(MovieType)
-    movie = graphene.Field(MovieType, id=graphene.Int(), title=graphene.String())
+    # all_movies = graphene.List(MovieType)
+    # movie = graphene.Field(MovieType, id=graphene.Int(), title=graphene.String())
+
+    # Relay Implementation for Queries
+    all_movies = DjangoFilterConnectionField(MovieNode)
+    movie = relay.Node.Field(MovieNode)
 
     all_directors = graphene.List(DirectorType)
 
-    @login_required
-    def resolve_all_movies(self, info, **kwargs):
-        # user = info.context.user
-        # if not user.is_authenticated:
-        #     raise Exception('Auth credentials were not provided')
-        return Movie.objects.all()
+    # @login_required
+    # def resolve_all_movies(self, info, **kwargs):
+    #     # user = info.context.user
+    #     # if not user.is_authenticated:
+    #     #     raise Exception('Auth credentials were not provided')
+    #     return Movie.objects.all()
 
     def resolve_all_directors(self, info, **kwargs):
         return Director.objects.all()
 
-    def resolve_movie(self, info, **kwargs):
-        movie_id = kwargs.get('id')
-        title = kwargs.get('title')
-
-        if movie_id is not None:
-            return Movie.objects.get(pk=movie_id)
-        if title is not None:
-            return Movie.objects.get(title=title)
-
-        return None
+    # def resolve_movie(self, info, **kwargs):
+    #     movie_id = kwargs.get('id')
+    #     title = kwargs.get('title')
+    #
+    #     if movie_id is not None:
+    #         return Movie.objects.get(pk=movie_id)
+    #     if title is not None:
+    #         return Movie.objects.get(title=title)
+    #
+    #     return None
 
 
 class MovieCreateMutation(graphene.Mutation):
@@ -60,6 +77,7 @@ class MovieCreateMutation(graphene.Mutation):
         movie = Movie.objects.create(title=title, year=year)
 
         return MovieCreateMutation(movie=movie)
+
 
 class MovieUpdateMutation(graphene.Mutation):
     class Arguments:
@@ -78,6 +96,7 @@ class MovieUpdateMutation(graphene.Mutation):
         movie.save()
 
         return MovieUpdateMutation(movie=movie)
+
 
 class MovieDeleteMutation(graphene.Mutation):
     class Arguments:
