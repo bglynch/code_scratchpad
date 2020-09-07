@@ -9,6 +9,10 @@ def create_table(conn, create_table_sql):
     try:
         c = conn.cursor()
         c.execute(create_table_sql)
+        tables = c.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()
+        print("..successful table creating")
+        print(f"  current tables: {tables}")
+        c.close()
     except Error as e:
         print(e)
 
@@ -45,3 +49,23 @@ def check_table_for_column(connection, table_name, column_name):
 def close_connection(connection):
     connection.close()
     print("...connection closed")
+
+def query_tables(connection):
+    c = connection.cursor()
+    tables = c.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()
+    c.close()
+    print(tables)
+
+def query_col_names(connection, col_name):
+    cur = connection.cursor()
+    cur.execute(f"PRAGMA table_info({table_name})")
+    list_of_table_columns = [x[1] for x in cur]
+    print(list_of_table_columns)
+
+def delete_table(connection, table_name):
+    c = connection.cursor()
+    c.execute(f"DROP TABLE IF EXISTS {table_name};")
+    tables = c.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()
+    c.close()
+    print(f"..table {table_name} deleted")
+    print(f"  current tables: {tables}")
