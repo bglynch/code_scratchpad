@@ -2,6 +2,7 @@ venv-py-3.6
 .DS_Store
 venv/
 .idea/
+.vscode/
 
 ### Python template
 # Byte-compiled / optimized / DLL files
