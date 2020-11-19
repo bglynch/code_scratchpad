@@ -5,6 +5,17 @@ from sqlite3 import Error
 # =========================================
 # -------- BUILDING A DATABASE ----------
 # =========================================
+
+# Examples
+'''
+table = """ CREATE TABLE IF NOT EXISTS projects (
+                id integer PRIMARY KEY,
+                name text NOT NULL,
+                begin_date text,
+                end_date text
+            ); """
+create_table(conn, table)                          
+'''
 def create_table(conn, create_table_sql):
     try:
         c = conn.cursor()
@@ -55,6 +66,11 @@ def query_tables(connection):
     tables = c.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()
     c.close()
     print(tables)
+
+def query(connection, query):
+    c = connection.cursor()
+    tables = c.execute(query)
+    c.close()    
 
 def query_col_names(connection, col_name):
     cur = connection.cursor()
