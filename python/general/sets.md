@@ -10,8 +10,8 @@ https://docs.python.org/3/library/stdtypes.html#set
 
 ```python
 # create set
-l = {'spam', 'eggs'} # this is the fastest way to initialise a set
-l = set(['spam', 'eggs'])
+l = {'spam', 'eggs'}        # literal syntax, faster than constructor
+l = set(['spam', 'eggs'])   # constructor
 
 # create set from list
 l = ['spam', 'eggs', 'spam']
