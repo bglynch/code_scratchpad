@@ -24,6 +24,9 @@ os.rmdir('path')         # delete empty directory
 
 os.path.isfile('path')   # 
 os.path.isdir('path')
+
+os.path.getsize('path')  # get file size
+os.stat('path').st_size  # get file size
 ```
 
 

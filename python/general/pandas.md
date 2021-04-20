@@ -1,36 +1,74 @@
 # Pandas
 
-### Imports
+### Jupyter Notebook Shortcuts
 
-```python
-%matplotlib inline
+https://youtu.be/2eCHD6f_phE
 
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as mp
-import re
-```
+https://www.youtube.com/watch?v=HW29067qVWk
 
 
 
-### Imports
+## Imports and Exports
 
-sqlite3
+### sqlite3: Imports
 
 ```python
 import sqlite3
 
-cnx = sqlite3.connect('pprALL.db')
-df = pd.read_sql_query('SELECT * FROM soldProperties WHERE "County"="Dublin" COLLATE NOCASE', cnx)
+conn = sqlite3.connect('database.db')
+df = pd.read_sql_query('SELECT * FROM table_name WHERE "County"="Dublin" COLLATE NOCASE', conn)
 ```
 
-csv
+### sqlite3: Exports
+
+##### database - sqlalchemy
+
+```python
+from sqlalchemy import create_engine
+
+engine = create_engine('sqlite://', echo=False)
+df.to_sql('table_name', con=engine)
+```
+
+##### database - sqlite3_new table
+
+```python
+import sqlite3
+
+conn = sqlite3.connect('sandbox.db')
+cur = conn.cursor()
+cur.execute(f"DROP TABLE IF EXISTS construction;")
+df.to_sql('construction', conn)
+df.to_sql(name='raw_mod', con=conn, index=False) # no index col exported
+cur.close()
+conn.close()
+```
+
+##### database - sqlite3_append
+
+```python
+query ='''INSERT OR REPLACE into NewTable (ID,Name,Age) values (?,?,?) '''
+conn.executemany(query, df.to_records(index=False))
+conn.commit()
+```
+
+### csv
+
+##### imports
 
 ```python
 df = pd.read_csv("filename.csv") 
 ```
 
-geojson
+##### export
+
+```python
+df.to_csv('try.csv')
+```
+
+### geojson
+
+#### import
 
 ```python
 import geopandas as gpd
@@ -41,52 +79,82 @@ df = gpd.read_file(fname)
 
 
 
-### Explore Dataframe
+## Create Sample Dataframe
 
-Display options
+##### python dictionary
 
 ```python
-# set max columns to be displayed
-pd.set_option("display.max.columns", None)
+data = {
+  "Name": ["James", "Alice", "Phil", "James"],
+  "Age": [24, 28, 40, 24],
+  "Sex": ["Male", "Female", "Male", "Male"]
+}
+df = pd.DataFrame(data)
+print(df)
 
-# set numeric precision
-pd.set_option("display.precision", 2)
+    Name  Age     Sex
+0  James   24    Male
+1  Alice   28  Female
+2   Phil   40    Male
+3  James   24    Male
+```
+
+##### python list
+
+```python
+lst = ['Geeks', 'For', 'Geeks', 'is', 'portal', 'for', 'Geeks']
+lst2 = [11, 22, 33, 44, 55, 66, 77]
+df = pd.DataFrame(list(zip(lst, lst2)), columns =['Name', 'val'])
+
+     Name  val
+0   Geeks   11
+1     For   22
+2   Geeks   33
+3      is   44
+4  portal   55
+5     for   66
+6   Geeks   77
+
+
+lst = [['tom', 'reacher', 25], ['krish', 'pete', 30],
+       ['nick', 'wilson', 26], ['juli', 'williams', 22]]
+df = pd.DataFrame(lst, columns =['FName', 'LName', 'Age'], dtype = float)
+
+   FName     LName   Age
+0    tom   reacher  25.0
+1  krish      pete  30.0
+2   nick    wilson  26.0
+3   juli  williams  22.0
 ```
 
 
 
+### Display Options
+
 ```python
-# Summary of the dataframe
-df.info()
+pd.set_option("display.max.columns", None)    # set max columns to be displayed
+pd.set_option("display.precision", 2)         # set numeric precision
+```
 
-# length of the data frame
-len(df)
 
-# top few results
-df.head()
+
+### Explore Dataframe
+
+```python
+df.info()          # Summary of the dataframe
+len(df)            # length of the data frame
+list(df.columns)   # list of columns
+df.head()          # top few results
+df.dtypes          # show column datatypes
+df['Column'].apply(lambda x: print(f"{x}: {type(x)}"))   # print column datatypes
 
 # statistics of dataframe
 df.describe()
 df.describe(include=np.object)
 
-# number of unique values
-df["game_location"].nunique()
-
-# is column values unique
-df['column'].is_unique
-
-# list of columns
-list(df.columns)
-
-# unique values for a column
-df['col_name'].unique()
-
-
-# show column datatypes
-df.dtypes
-
-# print column datatypes
-df['Column'].apply(lambda x: print(f"{x}: {type(x)}"))
+df["game_location"].nunique()   # number of unique values
+df['column'].is_unique          # is column values unique
+df['col_name'].unique()         # unique values for a column
 
 # number of unique value for each column
 for column in list(rathmines_df.columns):
@@ -103,44 +171,48 @@ Get value from column
 df[df['colum01'] == 'value']['column02'].values[0]
 ```
 
+Dates
+
+```python
+dfnew['date_mod'] = pd.to_datetime(dfnew['date'], dayfirst=True, format='%d/%m/%Y')
+
+
+```
+
+
+
 
 
 ### Columns
 
-Change column datatype
+##### Change column datatype
 
 ```python
-# convert to date
-df["date_game"]    = pd.to_datetime(df["date_game"])
-df['construction'] = df['construction'].astype('category')
+df["date"] = pd.to_datetime(df["date"])    # convert to date
+df['col'] = df['col'].astype('category')   # convert to category
 ```
 
-Add column
+##### Add column
 
 ```python
-# To end of the dataframe
-df['new_column'] = None
-
-# to a specific position
-df.insert(2, 'new-col', None)         2 = column position
-                                   None = data to insert
+df['new_column'] = None          # To end of the dataframe
+df.insert(2, 'new-col', None)    # to a specific position     
+  2 = column position
+  None = data to insert
 ```
 
-Delete column
+##### Delete column
 
 ```python
 # Deleting columns
-df = df.drop("Area", axis=1)   # Delete the "Area" column from the dataframe
+df = df.drop("Area", axis=1)               # Delete the "Area" column from the 
+df = df.drop(columns="area")               # delete using the columns parameter of 
+df = df.drop(["col_1","col_2"], axis=1)    # Delete multiple columns from the 
+df.drop("Area", axis=1, inplace=True)      # delete inplace
 
-# alternatively, delete columns using the columns parameter of drop
-df = df.drop(columns="area")
-
-# Delete the Area column from the dataframe in place
-# Note that the original 'data' object is changed when inplace=True
-df.drop("Area", axis=1, inplace=True) 
-
-# Delete multiple columns from the dataframe
-df = df.drop(["Y2001", "Y2002", "Y2003"], axis=1)
+# delete if exists
+candidates=["col_1","col_2"]
+df = df.drop([x for x in candidates if x in df.columns], axis=1)
 
 # remove rows where column value equals
 df.drop(df[df['not_full_market_price']=="yes"].index, inplace=True)
@@ -148,7 +220,7 @@ df.drop(["not_full_market_price"], axis=1, inplace=True)
 
 ```
 
-Rename column
+##### Rename column
 
 ```python
 # Rename multiple columns
@@ -157,31 +229,80 @@ df.rename(columns={'ExistingName':'NewName', 'ExistingName2':'NewName2'}, inplac
 
 
 
+### Rows
+
+
+
+
+
 #### Query Dataframe
 
 ```python
-# product column where Product == Apples
-df['Product'] == 'Apples'
-
-
-# dataframe where price > €100,000 and less than €6,500,000
-(df.price < 100000.0) | (df.price > 6500000.0)
+df['Product'] == 'Apples'              # product column where Product == Apples
+(df.price < 10.0) | (df.price > 65.0)  # dataframe where price > €10 and less than €64
 (df['Sale'] > 30) & (df['Sale'] < 33)
 
-
-# 
+# using str.contains
 df['Address'].str.contains('dublin ?6$')
 ~df['Address'].str.contains(r"[&-]")
 (df['Address'].str.contains('dublin ?6$')) | (df['Postcode'].str.contains('dublin ?6'))
 
-# dataframe of duplicates of street and area combined
-df.duplicated(['street', 'area'])
+df['Product'].isin(['Mangos', 'Grapes'])  # 'Product' column contains either 'Grapes' or 'Mangos'
+df['Address'].apply(lambda x: bool(re.match(r'.*(dublin 6)',x, re.IGNORECASE))) # using regex
+```
 
-# dataframe of duplicates of street and area combined
-df['Product'].isin(['Mangos', 'Grapes'])
 
-# Select rows for which 'Product' column contains either 'Grapes' or 'Mangos'
-df['Address'].apply(lambda x: bool(re.match(r'.*(dublin 6)',x, re.IGNORECASE)))
+
+#### Filter e.g. get Dublin sales
+
+```python
+#Filter pandas dataframe by column value
+newdf = df[(df.origin == "JFK") & (df.carrier == "B6")] #Method 1 : DataFrame Way
+newdf = df.query('origin == "JFK" & carrier == "B6"') # Method 2 : Query Function
+newdf = df.loc[(df.origin == "JFK") & (df.carrier == "B6")] # Method 3 : loc function
+
+newdf = df[df.origin.isin(["JFK", "LGA"])]   #Selecting multiple values of a column
+newdf = df.loc[(df.origin != "JFK") & (df.carrier == "B6")] # Select rows whose column value does not equal a specific value
+newdf = df[~((df.origin == "JFK") & (df.carrier == "B6"))] # negate the whole condition
+newdf = df[df.origin.notnull()] # Select Non-Missing Data in Pandas Dataframe
+
+df[df['var1'].str[0] == 'A']  # Select rows having values starting from letter 'A'
+df[df['var1'].str.len()>3]    # Filter rows having string length greater than 3
+df[df['var1'].str.contains('A|B')] # Select string containing letters A or B
+```
+
+
+
+#### Regex
+
+```python
+df['first_five_Letter']=df['Country (region)'].str.extract(r'(^w{5})')  # new column with 1st 5 characters of each country
+df[df['Country (region)'].str.match('^P.*')== True]                     # countries starting with P
+df[df['Country (region)'].str.count('^[pP].*')>0]												# countries starting with P or p
+df[df['Country (region)'].str.contains('^I.*')==True]
+
+df_updated = df.replace(to_replace ='[nN]ew', value = 'New_', regex = True)
+df['New'].replace('(-\d)','',regex=True, inplace = True)
+
+def regex_replace(string):
+    string = re.sub(r'regex', '', string)
+    return string
+df['br_address'] = df['br_address'].apply(regex_replace)
+```
+
+
+
+##### duplicates  
+
+[**duplicated**(subset=None,keep='first')](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.duplicated.html)              : Return boolean Series denoting duplicate rows
+
+[**drop_duplicates**(subset=None, keep='first' , inplace=False , ignore_index=False)](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.drop_duplicates.html)    : Return DataFrame with duplicate rows removed.
+
+```python
+dup_df = df.duplicated(['street', 'area'])    # dataframe of duplicates of street and area combined
+df = df.drop_duplicates() # remove duplicates
+df = df.sort_values('Age', ascending=False)           # sort values before removing duplicates
+df = df.drop_duplicates(subset='Name', keep='first')  # remove duplicates based on Name column, and keeping the first one
 ```
 
 
@@ -217,9 +338,7 @@ df['col1']=( df.col1.str.split()
               .str.replace(',','') )
 
 
-
 dfmin['reverse']  = dfmin['_address'].apply(lambda x:x[::-1].replace(".","").replace(",","").replace(" ",""))
-
 
 
 # map housetype to an int
@@ -250,7 +369,9 @@ pd.notnull(postcode
 
 ```
 
-Remove rows
+
+
+##### Remove rows
 
 ```python
 # ================= Option 01: reindex to a column and remove using list
@@ -315,34 +436,6 @@ pd.concat([df1, df2]).sort_values(['address'])
 
 
 
-#### Export dataframe
-
-csv
-
-```python
-df_singlesale.to_csv('try.csv')
-```
-
-database
-
-```python
-from sqlalchemy import create_engine
-
-engine = create_engine('sqlite://', echo=False)
-df.to_sql('table_name', con=engine)
-
-------
-
-import sqlite3 as sql
-
-conn = sql.connect('sandbox.db')
-c = conn.cursor()
-c.execute(f"DROP TABLE IF EXISTS construction;")
-dfmin.to_sql('construction', conn)
-c.close()
-conn.close()
-```
-
 
 
 #### GIS Data - Json to GeoJson
@@ -355,7 +448,7 @@ import json
 import os
 ```
 
-load son
+load json
 
 ```python
 file = "location-of-file"
@@ -397,3 +490,36 @@ write to geojson
 df.to_file("countries.geojson", driver='GeoJSON')
 ```
 
+
+
+---
+
+## Some solved problems
+
+### find most common placenames at the end of addresses
+
+```python
+import collections
+import re
+
+no_loc = df[df['locality'].apply(lambda x: x==None)]
+end_of_address_places = no_loc.address.apply(lambda x: re.sub(r'^.+, (\w+)$', r'\1', x))
+group_places = end_of_address_places.value_counts()
+
+# placenames that appear more than 10 times
+my_dict = group_places.to_dict()
+
+# remove place that appear less than 10 time
+for k, v in my_dict.copy().items():
+    if v < 10:
+        del my_dict[k]
+
+# sorted by placename
+collections.OrderedDict(sorted(my_dict.items()))
+```
+
+
+
+[PYTHON : 10 WAYS TO FILTER PANDAS DATAFRAME](https://www.listendata.com/2019/07/how-to-filter-pandas-dataframe.html)
+
+[How to use Regex in Pandas](https://kanoki.org/2019/11/12/how-to-use-regex-in-pandas/)
