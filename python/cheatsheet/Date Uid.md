@@ -21,6 +21,19 @@ time.time_ns()
 
 
 
+### Function execution time
+
+```python
+import time
+start_time = time.time()
+main()
+print(f"--- {(time.time() - start_time)} seconds ---")
+
+--- 0.764891862869 seconds ---
+```
+
+
+
 ## Date
 
 [**ISO 8601**](https://en.wikipedia.org/wiki/ISO_8601) : International Organization for Standardization on Time

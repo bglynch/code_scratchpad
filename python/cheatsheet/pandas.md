@@ -175,11 +175,24 @@ Dates
 
 ```python
 dfnew['date_mod'] = pd.to_datetime(dfnew['date'], dayfirst=True, format='%d/%m/%Y')
-
-
 ```
 
 
+
+### Create UUID
+
+```python
+from hashlib import blake2b
+
+# create uuid for each
+for row in df.itertuples():
+  # hash_id_string = f"{row.date}{row.address}{row.price}"
+  hash_id_string = f"{row.date}{row.address}{row.postcode}{row.county}{row.price}{row.not_full_market_price}{row.vat_exclusive}{row.floor_area}{row.construction}"
+  df.at[row.Index, 'uuid'] = blake2b(bytes(hash_id_string, "utf-8"), digest_size=5).hexdigest()
+
+  # remove duplicates
+  df.drop_duplicates(inplace=True)
+```
 
 
 
@@ -414,6 +427,7 @@ def reverse_address(string):
 
 # no need to put the variable in the apply function
 test['br_address'] = test['br_address'].apply(reverse_address)
+test['br_address'] = test['br_address'].apply(lambda x: reverse_address(x)]
 ```
 
 
