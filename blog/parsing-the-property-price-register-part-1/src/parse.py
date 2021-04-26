@@ -15,6 +15,6 @@ def parse_address_of_eircode(address: str):
         'w23', 'w34', 'w91', 'x35', 'x42', 'x91', 'y14', 'y21', 'y25', 'y34', 'y35'
     ]
     regex = r"\b(" + '|'.join(eircode_routing_keys) + r") ?[a-z0-9]{4}$"
-    address = re.sub(regex, '', address, flags=re.IGNORECASE)
+    address = re.sub(regex, '', address, flags=re.IGNORECASE).rstrip(', ')
 
     return address
