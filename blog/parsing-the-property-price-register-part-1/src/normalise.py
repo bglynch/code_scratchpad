@@ -1,6 +1,20 @@
 import re
 
 
+def normalise_dublin_postcode(address: str):
+    address = address.lower().strip(',. ')
+    address = re.sub(r"(apt|block) +(d\d+)", r"\1==\2", address)
+    address = re.sub(r"[, ]*\b[db]+y?[iunb]{1,2}[okgbil]{1,3}[nhei]{1,2} *(\d)", r", dublin \1", address)
+    address = re.sub(r'\bd(ublin)? *6 *(west|w)\b', 'dublin_6w', address)
+    address = re.sub(r'\bdublin\.? *0?(\d+)', r'dublin_\1', address)
+    address = re.sub(r'([a-z]{3,})dublin\.? *0?(\d+)', r'\1, dublin_\2', address)
+    address = re.sub(r" d[ /\.]*([012]?[0-9]w?)\b", r" dublin_\1", address)
+    address = re.sub(r"\b(dublin_([12]?[0-9]w?)),? \1$", r", dublin_\2", address)
+    address = re.sub(r" ?,[, ]+", r", ", address)
+    address = re.sub("==", r" ", address)
+    return address
+
+
 def normalise_county(address: str):
     counties = ['carlow', 'cavan', 'clare', 'cork', 'donegal', 'down', 'dublin', 'fermanagh', 'galway', 'kerry',
                 'kildare', 'kilkenny', 'laois', 'leitrim', 'limerick', 'longford', 'louth', 'mayo', 'meath', 'monaghan',
@@ -21,7 +35,7 @@ def normalise_county(address: str):
     address = re.sub(r"[, ]+(north|south) tipperary", r", co_tipperary", address)
     address = re.sub(r"[, ]+(north) dublin", r", co_dublin", address)
     address = re.sub(r"[, ]+(city of dublin|dublin city)", r", co_dublin", address)
-    address = re.sub(r"(?<!(the|via)) "+counties_regex+r"$", r", co_\2", address)
+    address = re.sub(r"(?<!(the|via)) " + counties_regex + r"$", r", co_\2", address)
     return address
 
 
