@@ -2,11 +2,65 @@ import unittest
 from src import normalise as nm
 
 
-class ExtractTests(unittest.TestCase):
-    def test_parse_address_of_eircode(self):
+class NormaliseTests(unittest.TestCase):
+    def test_normalise_dublin_postcode(self):
+        self.assertEqual(nm.normalise_dublin_postcode('1 some place, dublin4'),        "1 some place, dublin_4")
+        self.assertEqual(nm.normalise_dublin_postcode('1 some place, dublin 4'),       "1 some place, dublin_4")
+        self.assertEqual(nm.normalise_dublin_postcode('1 some place, dublin  4'),      "1 some place, dublin_4")
+        self.assertEqual(nm.normalise_dublin_postcode('1 some place, dublin 04'),      "1 some place, dublin_4")
+        self.assertEqual(nm.normalise_dublin_postcode('1 some place, dublin 14'),      "1 some place, dublin_14")
+        self.assertEqual(nm.normalise_dublin_postcode('1 some place, dublin 6w'),      "1 some place, dublin_6w")
+        self.assertEqual(nm.normalise_dublin_postcode('1 some place, dublin 6 west'),  "1 some place, dublin_6w")
+        self.assertEqual(nm.normalise_dublin_postcode('1 some place, dublin. 15'),     "1 some place, dublin_15")
+        self.assertEqual(nm.normalise_dublin_postcode('1 some place, dublin 15.'),     "1 some place, dublin_15")
+        self.assertEqual(nm.normalise_dublin_postcode('1 some place, d9'),             "1 some place, dublin_9")
+        self.assertEqual(nm.normalise_dublin_postcode('1 some place, d 15'),           "1 some place, dublin_15")
+        self.assertEqual(nm.normalise_dublin_postcode('1 some place, d/15'),           "1 some place, dublin_15")
+        self.assertEqual(nm.normalise_dublin_postcode('1 some place, d.15'),           "1 some place, dublin_15")
+        self.assertEqual(nm.normalise_dublin_postcode('1 some place, d. 15'),          "1 some place, dublin_15")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place dublin 10, dublin 10'), "1 place, dublin_10")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place dublin 10, town'),      "1 place, dublin_10, town")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, towndublin 6'),        "1 place, town, dublin_6")
+        # no change test
+        self.assertEqual(nm.normalise_dublin_postcode('apt 58, block d2, town'),       "apt 58, block d2, town")
+        self.assertEqual(nm.normalise_dublin_postcode('apt d4, harvey dock, youghal'), "apt d4, harvey dock, youghal")
+        self.assertEqual(nm.normalise_dublin_postcode('apartment d4, youghal'),        "apartment d4, youghal")
+        self.assertEqual(nm.normalise_dublin_postcode('place, apt d07 student accom'), "place, apt d07 student accom")
+        self.assertEqual(nm.normalise_dublin_postcode('apt   d4, corm apts, foxford'), "apt d4, corm apts, foxford")
+        self.assertEqual(nm.normalise_dublin_postcode('d2, cornmullen, fooxford'),     "d2, cornmullen, fooxford")
+        self.assertEqual(nm.normalise_dublin_postcode('51/d2 woodfield grove'),        "51/d2 woodfield grove")
+        # bad spellings
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, bublin 6'),  "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dbulin 6'),  "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, diblin 6'),  "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, diblin 6'),  "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dubiln 6'),  "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dubin 6'),   "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dublbin 6'), "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dubli 6'),   "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dublini 6'), "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dublinn 6'), "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dubllin 6'), "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dubln 6'),   "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dublni 6'),  "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, duboin 6'),  "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dulbin 6'),  "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dulin 6'),   "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dunlin 6'),  "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dunlin6'),   "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dublihn 6'), "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dubkin 6'),  "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dublihn 6'), "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, ddublin 6'), "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dubline 6'), "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dyublin 6'), "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dyublin 6'), "1 place, dublin_6")
+        self.assertEqual(nm.normalise_dublin_postcode('1 place, dubglin 6'), "1 place, dublin_6")
+
+    def test_normalise_county(self):
         self.assertEqual(nm.normalise_county('1 Some Place, co cork'),    "1 some place, co_cork")
         self.assertEqual(nm.normalise_county('1 Some Place, co. cork'),   "1 some place, co_cork")
-        self.assertEqual(nm.normalise_county('1 Some Place, co . cork'),   "1 some place, co_cork")
+        self.assertEqual(nm.normalise_county('1 Some Place, co . cork'),  "1 some place, co_cork")
         self.assertEqual(nm.normalise_county('1 Some Place, co; cork'),   "1 some place, co_cork")
         self.assertEqual(nm.normalise_county('1 Some Place, co: cork'),   "1 some place, co_cork")
         self.assertEqual(nm.normalise_county('1 Some Place, co.cork'),    "1 some place, co_cork")
@@ -17,7 +71,7 @@ class ExtractTests(unittest.TestCase):
         self.assertEqual(nm.normalise_county('1 Some Place  cork'),       "1 some place, co_cork")
         self.assertEqual(nm.normalise_county('1 Some Place  cork.'),      "1 some place, co_cork")
         self.assertEqual(nm.normalise_county('1 Some Place, cork'),       "1 some place, co_cork")
-        self.assertEqual(nm.normalise_county('coast rd, fountainstownco cork'),       "coast rd, fountainstown, co_cork")
+        self.assertEqual(nm.normalise_county('coast rd, fountainstownco cork'), "coast rd, fountainstown, co_cork")
         # part of a county
         self.assertEqual(nm.normalise_county('1 Some Place, west cork'),        "1 some place, co_cork")
         self.assertEqual(nm.normalise_county('1 Some Place, nr cork'),          "1 some place, co_cork")
@@ -26,17 +80,17 @@ class ExtractTests(unittest.TestCase):
         self.assertEqual(nm.normalise_county('1 Some Place, north dublin'),     "1 some place, co_dublin")
         self.assertEqual(nm.normalise_county('1 Some Place, north tipperary'),  "1 some place, co_tipperary")
         self.assertEqual(nm.normalise_county('1 Some Place, south tipperary'),  "1 some place, co_tipperary")
-        self.assertEqual(nm.normalise_county('1 some place, city of dublin'),     "1 some place, co_dublin")
+        self.assertEqual(nm.normalise_county('1 some place, city of dublin'),   "1 some place, co_dublin")
         # county at end of address
-        self.assertEqual(nm.normalise_county('1 Some Place tipperary'),  "1 some place, co_tipperary")
+        self.assertEqual(nm.normalise_county('1 Some Place tipperary'),    "1 some place, co_tipperary")
         # remove mistakes
         self.assertEqual(nm.normalise_county('1 Some Place, co'),          "1 some place")
         self.assertEqual(nm.normalise_county('1 Some Place, cork po'),     "1 some place, co_cork")
         self.assertEqual(nm.normalise_county('1 Some Place, port laois'),  "1 some place, portlaoise")
         self.assertEqual(nm.normalise_county('1 Some Place, port laoise'), "1 some place, portlaoise")
         # negative change
-        self.assertEqual(nm.normalise_county('1 Some Place, the louth'),          "1 some place, the louth")
-        self.assertEqual(nm.normalise_county('1 Some Place, via louth'),          "1 some place, via louth")
+        self.assertEqual(nm.normalise_county('1 Some Place, the louth'),   "1 some place, the louth")
+        self.assertEqual(nm.normalise_county('1 Some Place, via louth'),   "1 some place, via louth")
 
     def test_normalise_county_prefix_spelling(self):
         self.assertEqual(nm.normalise_county_prefix_spelling('1 some place, ci cork'),      "1 some place, county cork")
@@ -62,7 +116,6 @@ class ExtractTests(unittest.TestCase):
         self.assertEqual(nm.normalise_county_prefix_spelling('1 place, old dublin road'),   "1 place, old dublin road")
         self.assertEqual(nm.normalise_county_prefix_spelling('1 place, i f s c dublin 1'),   "1 place, ifsc, dublin 1")
 
-# 27 auburn close, earlscout waterford, co_waterford
     def test_normalise_county_spelling(self):
         # = cork
         self.assertEqual(nm.normalise_county_spelling('1 some place, corl'),     "1 some place, cork")

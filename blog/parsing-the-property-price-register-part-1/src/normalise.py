@@ -3,7 +3,8 @@ import re
 
 def normalise_dublin_postcode(address: str):
     address = address.lower().strip(',. ')
-    address = re.sub(r"(apt|block) +(d\d+)", r"\1==\2", address)
+    address = re.sub(r"(apt|apartment|block) +(d\d+)", r"\1==\2", address)
+    address = re.sub(r" (d\d\-\d+)", r"==\1", address)
     address = re.sub(r"[, ]*\b[db]+y?[iunb]{1,2}[okgbil]{1,3}[nhei]{1,2} *(\d)", r", dublin \1", address)
     address = re.sub(r'\bd(ublin)? *6 *(west|w)\b', 'dublin_6w', address)
     address = re.sub(r'\bdublin\.? *0?(\d+)', r'dublin_\1', address)
