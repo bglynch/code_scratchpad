@@ -16,5 +16,21 @@ def parse_address_of_eircode(address: str):
     ]
     regex = r"\b(" + '|'.join(eircode_routing_keys) + r") ?[a-z0-9]{4}$"
     address = re.sub(regex, '', address, flags=re.IGNORECASE).rstrip(', ')
-
     return address
+
+
+def parse_address_of_dublin_postcode(address: str):
+    address = address.strip(' ,.')
+    regex = r'dublin_(\d+w?)'
+    address = re.sub(regex, ',', address, flags=re.IGNORECASE)
+    address = re.sub(r"\s*,[,\s]+", ', ', address)
+    return address.strip(',. ')
+
+
+def parse_address_of_county(address: str):
+    address = address.strip(' ,.')
+    regex = r'co_([a-z]+)'
+    address = re.sub(regex, ',', address, flags=re.IGNORECASE)
+    address = re.sub(r"\s*,[,\s]+", ', ', address)
+    return address.strip(',. ')
+
