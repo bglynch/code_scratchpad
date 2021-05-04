@@ -20,3 +20,23 @@ def extract_eircode_from_end_of_address(address: str):
     if regex_result is not None:
         eircode = f"{regex_result.group(1)} {regex_result.group(2)}".upper()
     return eircode
+
+
+def extract_dublin_postcode_from_address(address: str):
+    address = address.lower().strip(' ,.')
+    regex = r'dublin_(\d+w?)'
+    regex_result = re.search(regex, address)
+    postcode = None
+    if regex_result is not None:
+        postcode = f"Dublin {regex_result.group(1).upper()}"
+    return postcode
+
+
+def extract_county_from_address(address: str):
+    address = address.lower().strip(' ,.')
+    regex = r'co_([a-z]+)'
+    regex_result = re.search(regex, address)
+    county = None
+    if regex_result is not None:
+        county = regex_result.group(1).title()
+    return county
