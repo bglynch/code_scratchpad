@@ -2,7 +2,7 @@
 
 # Part 01: Eircode, County and Dublin Postcode
 
-![toa-heftiba-nrSzRUWqmoI-unsplash](/Users/br20069521/Downloads/toa-heftiba-nrSzRUWqmoI-unsplash.jpg)
+![toa-heftiba-nrSzRUWqmoI-unsplash](images/hero.jpg)
 
 *Photo by [Toa Heftiba](https://unsplash.com/@heftiba?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/houses?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)*
 
@@ -164,7 +164,7 @@ Below is a view of the temp table created.
 
 ## 3.1 Eircode Extraction
 
-![eircode](/Users/br20069521/Desktop/eircode.png)
+![eircode](images/eircode.png)
 
 Eircodes are quite structured, so there should'nt be a need to normalise the address before extraction.
 
@@ -290,7 +290,7 @@ Considering Eircodes were introduced in July 2015, which accounts for over half 
 
 Its is approximatly **0.0001%** of address.
 
-![image-20210426105039237](/Users/br20069521/Library/Application Support/typora-user-images/image-20210426105039237.png)
+![image-20210426105039237](images/db-eircode.png)
 
 
 
@@ -298,7 +298,7 @@ Its is approximatly **0.0001%** of address.
 
 ## 3.2 Dublin Postcode Extraction
 
-![Leeson_St_-_Hatch_St_nameplates](/Users/br20069521/Desktop/Leeson_St_-_Hatch_St_nameplates.jpeg)
+![Leeson_St_-_Hatch_St_nameplates](images/postcode.jpeg)
 
 Dublin postcodes are next in line in terms of structure. They are typically written as "Dublin" followed by the postcode number. This will not be the case for all addresses, so we will need to normalise the address before attempting extraction.
 
@@ -372,7 +372,7 @@ Before we move onto extracting the postcode, we will do some investigation into 
 
 ###### Example: Search for misspellings of dublin with a number after (regex: /d[ublin ]*[\dw]+$/)
 
-![image-20210427144902431](/Users/br20069521/Library/Application Support/typora-user-images/image-20210427144902431.png)
+![image-20210427144902431](images/db-postcode-1.png)
 
 Here are some examples of rows that were not picked up by out origional tests
 
@@ -555,7 +555,7 @@ Now looking at the database, we can see that **69,687** Dublin Postcodes have be
 
 Considering sales in Dublin account for about 150,000 rows in the database, this is a great return.
 
-![Screenshot 2021-05-04 at 10.37.11](/Users/br20069521/Desktop/Screenshot 2021-05-04 at 10.37.11.png)
+![Screenshot 2021-05-04 at 10.37.11](images/db-postcode-2.png)
 
 
 
@@ -563,7 +563,7 @@ Considering sales in Dublin account for about 150,000 rows in the database, this
 
 ## 3.3 County Extraction
 
-![shutterstock-32309722-1](/Users/br20069521/Desktop/shutterstock-32309722-1.jpeg)
+![shutterstock-32309722-1](images/county.jpeg)
 
 Finally, we will attempt to extract the county name from the end on an address. This will be more complicated than the previous two extractions.
 
@@ -619,11 +619,11 @@ Now we will do some investigation into the database to find outliers. Again, we 
 
 ###### Search for County in address (regex: / (county|co\\.?) [a-z]+$/)
 
-![image-20210426121830279](/Users/br20069521/Library/Application Support/typora-user-images/image-20210426121830279.png)
+![image-20210426121830279](images/db-postcode-3.png)
 
 ###### Seach for county names at the end of the address preceeded by a space
 
-![image-20210426122635022](/Users/br20069521/Library/Application Support/typora-user-images/image-20210426122635022.png)
+![image-20210426122635022](images/db-postcode-4.png)
 
 Between these two initial searches, we have found almost 1,000 outliers. 
 
@@ -869,7 +869,7 @@ Looking at the database, we can see that **163,637** County names have been **ex
 
 This is approx 34% of rows in our database affected.
 
-![Screenshot 2021-05-04 at 11.20.26](/Users/br20069521/Desktop/Screenshot 2021-05-04 at 11.20.26.png)
+![Screenshot 2021-05-04 at 11.20.26](images/db-county-1.png)
 
 
 
@@ -992,7 +992,7 @@ The number of conflict are:
 
    **1,038** Counties	
 
-![image-20210504150250705](/Users/br20069521/Library/Application Support/typora-user-images/image-20210504150250705.png)
+![image-20210504150250705](images/conclusion.png)
 
 
 
