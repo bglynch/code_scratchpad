@@ -1,18 +1,20 @@
 # Parsing the Price Property Register
 
-# Part 01: Eircode, County and Dublin Postcode
+### Part 01: Eircode, County and Dublin Postcode
 
 ![toa-heftiba-nrSzRUWqmoI-unsplash](images/hero.jpg)
 
 *Photo by [Toa Heftiba](https://unsplash.com/@heftiba?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/houses?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)*
 
+## Introduction
 
+> *The Residential Property Price Register is produced by the Property Services Regulatory Authority (PSRA) pursuant to section 86 of the Property Services (Regulation) Act 2011. It includes Date of Sale, Price and Address of all residential properties purchased in Ireland since the 1st January 2010, as declared to the Revenue Commissioners for stamp duty purposes.*
 
-## 1.0 Introduction
+Anyone who has attempted to work with the data from Ireland’s Price Property Register will know that the dataset can be a bit of a mess.
 
-Anyone who has attempted to work with the data from Ireland's Price Property Register will know that the dataset is not very clean. It's very dirty in places. In this blog we will attempt to make it a bit less dirty. We will extract structured data from the address.
+We will attempt to tidy it up by extracting structured data from the semi-structured address string.
 
-By the end of this blog we will have improved almost 50% of the rows in the dataset.
+By the end of this blog we will have **improved almost 50% of the rows** in the dataset.
 
 Currently the dataset has approximatly 450,000 rows. The columns in the dataset are:
 
@@ -30,11 +32,9 @@ The ones we are interested in are **Address**, **Postal Code** and **County**.
 
 In many rows in the dataset, the Address can contain County information Postal Code information...or both.
 
-
-
 ### Aim
 
-Our aim is to remove this information from the address and update the Postal Code or County information where necessary.
+Our aim is to remove this information from the address string and update the Postcode or County information where necessary.
 
 ##### Examples
 
@@ -43,8 +43,6 @@ Our aim is to remove this information from the address and update the Postal Cod
 | 1 MEADOW AVENUE, DUNDRUM, DUBLIN 14           | **address** = 1 Meadow Avenue, Dundrum <br />**postcode**=Dublin 14 |
 | 44 ALLEN PARK ROAD, STILLORGAN, COUNTY DUBLIN | **address** = 44 Allen Park Road, Stillorgan <br />**county** = Dublin |
 | 1 INFIRMARY RD, DUBLIN 7, DUBLIN              | **address** = 1 Infirmary rd<br />**postcode** = Dublin 7<br />**county** = Dublin |
-
-
 
 ### Tools for the job
 
@@ -55,17 +53,13 @@ Our aim is to remove this information from the address and update the Postal Cod
 - Jupyter Notebooks
 - DB Browser for sqlite
 
-
-
 ### Method
 
 #### Data preperation
 
-PPR data is attained as a csv file. Pandas will be used to load the data, modify the column names and create a uuid for each row. 
+PPR data is attained as a csv file. Pandas will be used to load the data, modify the column names and create a uuid for each row.
 
 This will be exported to a sqlite database.
-
-
 
 #### Address cleaning
 
@@ -73,15 +67,17 @@ First we will normalise the eircode, county and postal code substrings in each a
 
 Testing will be used to create the normalisation and extraction functions
 
+> *regex will play a major role in creating these functions*
 
+Extraction will be done in order of structure
 
+1. Eircode: Rigid structure of a key followed by 4 alphanumeric characters
+2. Postcode: “Dublin” or “D” followed by a postcode number
+3. County: Different spellings of “county”, followed by County Name
 
+## Data Preperation
 
-## 2.0 Data Preperation
-
-Data can be downloaded here: https://propertypriceregister.ie/Website/NPSRA/pprweb.nsf/page/ppr-home-en
-
-
+The PPR dataset can be downloaded here: https://propertypriceregister.ie/Website/NPSRA/pprweb.nsf/page/ppr-home-en
 
 We will use pandas to prepare the data and save it to a sqlite database
 
@@ -126,11 +122,11 @@ conn.close()
 
 Now we have the PPR data in a sqlite database.
 
-
-
 ### Create tempoary data table
 
 We will create a temporary table to iterate over while we are creating the functions to normalise and extract data.
+
+Dummy columns are added to store our extracted data.
 
 To do this, we will again use pandas.
 
@@ -158,23 +154,17 @@ Below is a view of the temp table created.
 
 ![image-20210425110822447](/Users/br20069521/Library/Application Support/typora-user-images/image-20210425110822447.png)
 
-
-
-
-
-## 3.1 Eircode Extraction
+## Eircode Extraction
 
 ![eircode](images/eircode.png)
 
-Eircodes are quite structured, so there should'nt be a need to normalise the address before extraction.
+Eircodes are quite structured, so there shouldn’t be a need to normalise the address before extraction.
 
-Threre are 139 eircode routing keys, so we will look for one of these plus 4 succeeding alphanumeric characters.
+There are 139 eircode routing keys, so we will look for one of these plus 4 succeeding alphanumeric characters.
 
 Eircode routing keys can be found here: https://www.autoaddress.ie/blog/autoaddressblog/2016/09/21/eircode-routing-keys
 
-
-
-### Create a funciton to extract an Eircode from an address
+### Extract an Eircode from an address
 
 First we will create some tests.
 
@@ -187,7 +177,7 @@ def test_extract_eircode(self):
   self.assertEqual(ex.extract_eircode_from_end_of_address('1 Some Place, K67KR86'), "K67 KR86")
 ```
 
-Now we will write our funciton to pass the tests
+Now we will write our funciton to pass the tests.
 
 ##### eircode extraction function
 
@@ -213,13 +203,9 @@ def extract_eircode_from_end_of_address(address: str):
     return eircode
 ```
 
+> *Eircode can now be successfully extracted from an address*
 
-
-Now we can sucessfully extract an Eircode from an address
-
-
-
-### Create a funciton to remove an Eircode from an address
+### Remove an Eircode from an address
 
 Again, we will write test first.
 
@@ -231,6 +217,8 @@ def test_parse_address_of_eircode(self):
   self.assertEqual(pr.parse_address_of_eircode('1 Some Place K67 KR86'), "1 Some Place")
   self.assertEqual(pr.parse_address_of_eircode('1 Some Place, K67KR86'), "1 Some Place")
 ```
+
+And now, we will write the function so all the tests pass. This workflow will be common throughout.
 
 ##### eircode removal function
 
@@ -254,11 +242,7 @@ def parse_address_of_eircode(address: str):
     return address
 ```
 
-
-
-Now we can sucessfully remove an Eircode from an address
-
-
+> *Eircode can now be successfully removed from an address*
 
 ### Extract Eircode from address
 
@@ -282,34 +266,25 @@ cur.close()
 conn.close()
 ```
 
-
-
 Now after opening the database, we can see we have sucessfully extracted **35** eircodes. 
 
-Considering Eircodes were introduced in July 2015, which accounts for over half of the rows in the database, this is a disapointing return.
+Considering Eircodes were introduced in July 2015, which accounts for over half of the rows in the database, this is a disappointing return.
 
 Its is approximatly **0.0001%** of address.
 
 ![image-20210426105039237](images/db-eircode.png)
 
-
-
-
-
-## 3.2 Dublin Postcode Extraction
+## Dublin Postcode Extraction
 
 ![Leeson_St_-_Hatch_St_nameplates](images/postcode.jpeg)
 
-Dublin postcodes are next in line in terms of structure. They are typically written as "Dublin" followed by the postcode number. This will not be the case for all addresses, so we will need to normalise the address before attempting extraction.
+Dublin postcodes are next in line in terms of structure. They are typically written as “Dublin” followed by the postcode number. This will not be the case for all addresses, so we will need to normalise the address before attempting extraction.
 
-There are 22 dublin postcodes, and a list can be found here: https://en.wikipedia.org/wiki/List_of_Dublin_postal_districts
-
-
+There are 22 Dublin postcodes, and a list can be found here: https://en.wikipedia.org/wiki/List_of_Dublin_postal_districts
 
 ### Normalising the address for Dublin Postcodes
 
-From scanning through the database, we have extracted some tests for our normalisation function.
-We are attempting to normalise each postcode to **dublin_{postcode_number}**
+From scanning through the database, we have extracted some tests for our normalisation function. We will attempt to normalise each postcode to the format of **dublin_{postcode_number}**
 
 ##### Postcode normalisation tests
 
@@ -344,9 +319,7 @@ def normalise_dublin_postcode(address: str):
     return address
 ```
 
-
-
-We will run this function through or database to see how many address were normalised and search for outliers that aren't replresented in our tests.
+We will run this function through or database to see how many address were normalised and **search for outliers** that aren’t represented in our tests.
 
 ```python
 conn = sqlite3.connect('data/database.db')
@@ -366,23 +339,19 @@ conn.close()
 
 #### Look for outliers
 
-Before we move onto extracting the postcode, we will do some investigation into the database to find outliers.
-
-*DB Browser for Sqlite* allows for regex seaching which is extremely useful for this.
+**DB Browser for Sqlite** allows for **regex searching** which is extremely useful for this.
 
 ###### Example: Search for misspellings of dublin with a number after (regex: /d[ublin ]*[\dw]+$/)
 
 ![image-20210427144902431](images/db-postcode-1.png)
 
-Here are some examples of rows that were not picked up by out origional tests
+Here are some examples of rows that were not picked up by out original tests.
 
 | address                                      | error                                  |
 | -------------------------------------------- | -------------------------------------- |
 | 1 airpark square, rathfarnham, dublin16      | no space between dublin and number     |
 | 111 marlborough road, donnybrook, dublin  4  | double space between dublin and number |
 | 11 the alders, carrington, santry  dubllin 9 | misspelling of dublin                  |
-
-
 
 We will add all outliers found to our tests
 
@@ -441,8 +410,6 @@ def test_normalise_dublin_postcode(self):
   self.assertEqual(nm.normalise_dublin_postcode('1 place, dubglin 6'), "1 place, dublin_6")
 ```
 
-
-
 Now, we will update the postcode normalise function to make our new tests pass.
 
 #### Postcode normalisation function
@@ -462,13 +429,11 @@ def normalise_dublin_postcode(address: str):
     return address
 ```
 
-here is a link to the regex used for dublin misspellings: https://regex101.com/r/GtTYKh/2
+Here is a link to the regex used for Dublin misspellings: https://regex101.com/r/GtTYKh/2
 
 Now we have a robust function for normalising a Dublin Postcode in an address.
 
-
-
-### Create funciton for extracting Dublin Postcode from an address
+### Extracting Dublin Postcode from an address
 
 Dublin postcodes now have a consistent pattern in the address string. This makes it easy to extract them.
 
@@ -496,11 +461,10 @@ def extract_dublin_postcode_from_address(address: str):
     return postcode
 ```
 
-Now we can sucessfully extract a Dublin Postcode from an address
+> Now we can successfully extract a Dublin Postcode from an address
+>
 
-
-
-#### Create a funciton to remove Dublin Postcode from an address
+#### Remove Dublin Postcode from an address
 
 ##### Postcode removal tests
 
@@ -524,11 +488,9 @@ def parse_address_of_dublin_postcode(address: str):
     return address.strip(',. ')
 ```
 
-
-
 ### Update database
 
-Now we will loop over the database and extract/remove Dublin Postcodes from address containing them.
+We will loop over the database and extract/remove Dublin Postcodes from address containing them.
 
 ```python
 conn = sqlite3.connect('data/database.db')
@@ -549,34 +511,25 @@ cur.close()
 conn.close()
 ```
 
-
-
-Now looking at the database, we can see that **69,687** Dublin Postcodes have been **extracted**.
+Looking at the results in the database, we can see that **69,687** Dublin Postcodes have been **extracted**.
 
 Considering sales in Dublin account for about 150,000 rows in the database, this is a great return.
 
 ![Screenshot 2021-05-04 at 10.37.11](images/db-postcode-2.png)
 
-
-
-
-
-## 3.3 County Extraction
+## County Extraction
 
 ![shutterstock-32309722-1](images/county.jpeg)
 
-Finally, we will attempt to extract the county name from the end on an address. This will be more complicated than the previous two extractions.
+Finally, we will attempt to **extract the county name** from the end on an address. This will be **more complicated** than the previous two extractions.
 
 There are 26 counties in the database. Initially we will look for one of these these surrounded by a longhand/shorthand naming of county.
 
-
-
 ### Normalise function 
 
-##### (e.g. 1 Some Place, co cork => 1 Some Place, co_cork )
+> ##### 1 Some Place, co cork => 1 Some Place, co_cork
 
-From scanning through the database, we have extracted some tests for our normalisation function.
-We are attempting to normalise county to **co_{county_name}**
+From scanning through the database, we have extracted some tests for our normalisation function. We are attempting to normalise county to **co_{county_name}**
 
 ##### County normalisation tests
 
@@ -611,11 +564,9 @@ def normalise_county_name(address: str):
     return address
 ```
 
-
-
 ### Look for outliers
 
-Now we will do some investigation into the database to find outliers. Again, we will use DB Browser for Sqlite regex search for this.
+We will do some investigation into the database to find outliers. Again, we will use DB Browser for Sqlite regex search for this.
 
 ###### Search for County in address (regex: / (county|co\\.?) [a-z]+$/)
 
@@ -626,8 +577,6 @@ Now we will do some investigation into the database to find outliers. Again, we 
 ![image-20210426122635022](images/db-postcode-4.png)
 
 Between these two initial searches, we have found almost 1,000 outliers. 
-
-
 
 After futher investigation, there are numerous mistakes that we can correct. Here are a few that we missed:
 
@@ -645,17 +594,13 @@ After futher investigation, there are numerous mistakes that we can correct. Her
 | liskillea, waterfall, near cork                    | 'near' word unnecessary                                      |
 | springvale ballymaw, waterfall, near cork city     | 'near' and 'city' words unnecessary                          |
 
-
-
-If we updated our normalisation function to account for all these errors, it would potentially become difficult to read. 
+If we updated our normalisation function to account for all these errors, it would potentially become difficult to read.
 
 What we will do is split normalisation into three functions:
 
-- normalise county spelling mistakes i.e. dulbin => dublin
-- normalise county prefix spelling mistakes i.e. cointy cork => county cork
+- normalise county spelling mistakes
+- normalise county prefix spelling mistakes
 - normalise county name and prefix to a searchable pattern 
-
-
 
 ### Normalise County Spelling
 
@@ -684,7 +629,7 @@ def test_normalise_county_spelling(self):
   .....
 ```
 
-#### County spelling normalisation tests
+#### County spelling normalisation function
 
 There are several ways to normalise incorrect spelling. I have chosen to use regex.
 
@@ -717,8 +662,6 @@ def normalise_county_spelling(address: str):
     return address
 ```
 
-
-
 ### Normalise County Prefix Spelling
 
 #### County prefix spelling normalisation tests
@@ -749,7 +692,7 @@ def test_normalise_county_prefix_spelling(self):
   self.assertEqual(nm.normalise_county_prefix_spelling('1 place, i f s c dublin 1'),   "1 place, ifsc, dublin 1")
 ```
 
-#### County prefix spelling normalisation tests
+#### County prefix spelling normalisation function
 
 ```python
 def normalise_county_prefix_spelling(address: str):
@@ -767,8 +710,6 @@ def normalise_county_prefix_spelling(address: str):
     address = re.sub(r"([a-z])(co\.?|county) " + counties_regex, r"\1, county \3", address)
     return address
 ```
-
-
 
 ### Normalise County
 
@@ -838,8 +779,6 @@ def normalise_county(address: str):
     return address
 ```
 
-
-
 ### Update database
 
 Now we will loop over the database and extract/remove County names from address containing them.
@@ -863,27 +802,22 @@ cur.close()
 conn.close()
 ```
 
-
-
 Looking at the database, we can see that **163,637** County names have been **extracted**.
 
-This is approx 34% of rows in our database affected.
+This is approx **34%** of rows in our database affected.
 
 ![Screenshot 2021-05-04 at 11.20.26](images/db-county-1.png)
-
-
-
-
 
 ## Combine Extracted Data with the origional Dataset
 
 We have extracted either an Eircode, Dublin Postcode or County from **229,338** rows in the database.
 
-We will now combine this data with the origional dataset. In some cases, either the extracted County or Postcode won't match what is in the County or Postcode column. In this case we will combine the two and comma seperate them.
+We will now combine this data with the original dataset.
+In some cases, either the extracted County or Postcode won’t match what is in the County or Postcode column. In this case we will combine the two and comma-separate them.
 
 Also, if we have extracted a Dublin Postcode from an address where the County is not listed as Dublin, we will add Dublin to the county column.
 
-Theses rows that contain comma seperate values in the County or Dublin Postcode columns will have to be manually updated. 
+Theses rows that contain comma-separated values in the County or Dublin Postcode columns will have to be manually updated. 
 
 #### Get Origional Dataset as a pandas dataframe
 
@@ -957,7 +891,7 @@ for row in df.copy().itertuples():
 conn.close()
 ```
 
-##### Export Data
+### Export Data to Sqlite DB
 
 ```python
 conn = sqlite3.connect('data/database.db')
@@ -968,32 +902,28 @@ cur.close()
 conn.close()
 ```
 
-
-
 ## Conclusion
 
-We set out to extract Eircode,Postcode and County from the address column to normalise the information in this dataset and add structure where it was missing.
+We set out to extract Eircode, Postcode and County from the address string in the Property Price Register. To do this we normalised the information in the string to add structure where it was missing.
 
 Through a TDD approach, we were able to successfully extract:
 
-​     	  **35** Eircodes
+**35** Eircodes
 
-   **69,687** Dublin Postcodes
+**69,687** Dublin Postcodes
 
- **163,637** Counties
+**163,637** Counties
 
+This solution is not without its failings. There are conflicts due to inaccurate input of address, postcode or county in the original dataset.
 
+The number of conflicts are:
 
-This solution is not without it's failings. Threre are conflicts due to inaccurate input of address, postcode or county in the origional dataset.
+**2,068** Dublin Postcodes
 
-The number of conflict are:
-
-   **2,068** Dublin Postcodes
-
-   **1,038** Counties	
+**1,038** Counties
 
 ![image-20210504150250705](images/conclusion.png)
 
-
-
 There are ways to reduce these conflicts programatically, but that's for another blog.
+
+All the code for this blog is available to view on [Github](https://github.com/bglynch/code_scratchpad/tree/master/blog/parsing-the-property-price-register-part-1)

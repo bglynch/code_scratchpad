@@ -244,10 +244,6 @@ df.rename(columns={'ExistingName':'NewName', 'ExistingName2':'NewName2'}, inplac
 
 ### Rows
 
-
-
-
-
 #### Query Dataframe
 
 ```python
