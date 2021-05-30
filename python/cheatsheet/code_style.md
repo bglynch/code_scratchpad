@@ -1,4 +1,64 @@
-# Self Documenting Code
+## Clean Code
+
+### Naming Conventions
+
+- **Name** should answer all the big questions: why it exists, what it does, how it is used
+
+- **Class Names** Noun or noun phrase names (i.e. `Customer`, `WikiPage`, `Account`, `AddressParser`)
+- **Method Names** Verb or verb phrase names (ie `postPayment`, `deletePage`, `save`)
+- One word per concept (ie `fetch`, `retrieve`, `get` are similar, pick one and stick to it)
+
+
+
+### Function
+
+- hardly ever longer than 20 lines
+- should either do something or answer something
+- should do one thing
+- blocks within `if`, `else`, `while` should probably be a function
+- indent level should not be greater than one or two
+- a long descriptive name is better than a short enigmatic one
+- Arguements
+  - more than 3 requires special justification
+  - passing a boolean is terrible practice
+- Try/Catch blocks
+  - should be extraced into a function
+- DRY
+  - Dont Repeat Yourself
+
+
+
+### Comments
+
+- Comments are alway failures
+- should try make code so clear and expressive that comments are not needed
+
+
+
+### Objects and Data Structures
+
+- **Objects**: hide their data behind abstractions and expose functions that operate on that data
+
+- **Data Structures**: expose their data and have no meaningful functions
+
+- DTO (Data Transfer Object)
+
+  - class with public variables and no functions
+
+- Beans
+
+  - private variables manipulated by getters and setters
+
+- Active Records
+
+  - special form of DTO
+  - public variables with methonds like `save` and `find`
+
+  
+
+
+
+## Self Documenting Code
 
 https://javascript.plainenglish.io/the-ultimate-guide-to-writing-self-documenting-code-998ea9a38bd3
 
@@ -103,11 +163,4 @@ Types of functions
 - map
 - reduce
 
-
-
-
-
-
-
-### Filenames
 
