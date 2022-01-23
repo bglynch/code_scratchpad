@@ -1,5 +1,6 @@
 # test_capitalize.py
 import pytest
+import os
 
 def capital_case(x):
     if not isinstance(x, str):
