@@ -1,5 +1,3 @@
-
-
 # AWS DynamoDB
 
 Amazon DynamoDB is a fully managed NoSQL database service that provides fast and predictable performance with seamless scalability. 
@@ -7,6 +5,8 @@ Amazon DynamoDB is a fully managed NoSQL database service that provides fast and
 ## Key Concepts
 
 ### Tables, Items and Attributes
+
+![dynamodb-2](img/dynamodb-table.png)
 
 Tables, items, and attributes are the core building blocks of DynamoDB.
 A ***table*** is a grouping of data records.                                e.g Users Table
@@ -60,15 +60,35 @@ Each **item** in a table is uniquely identified by a **primary key**.
 2 types of primary key:
 
 1. **Partition Key** : A simple primary key, composed of one attribute known as the *partition key*.
-2. **Composite Key**: key is composed of two attributes. The first attribute is the *partition key*, and the second attribute is the *sort key*.
+2. **Partition Key** + **Sort Key**: Referred to as a *composite primary key*, key is composed of two attributes...combination must be Globally unique
+
+![dynamo-1](img/dynamodb-keys.png)
+
+##### Design Rule of Thumb
+
+- Are you always doing lookups of a know key, and is it globally unique? ........ Use **Partitiion Key**
+- Is your key non-unique, or do you want to do range like queries based off some other value(e.g. date) ....... Use **Partition key + Sort Key**
+- Other strategies....
+  - Use Prefixes/Suffixes
+  - Composed partition keys
+  - DynamoDB Accelerator (DAX) .... will occur extra cost
+
+###### Reading
+
+- [Choosing the Right DynamoDB Partition Key](https://aws.amazon.com/blogs/database/choosing-the-right-dynamodb-partition-key/)
+- [Simulating Amazon DynamoDB unique constraints using transactions](https://aws.amazon.com/blogs/database/simulating-amazon-dynamodb-unique-constraints-using-transactions/)
+
+
 
 ### Secondary Indexes
+
+![dynamodb-secondary-indexes](img/dynamodb-secondary-indexes.png)
 
 A *secondary index* lets you query the data in the table using an alternate key
 2 types of primary key:
 
 1. **Global secondary index** – An index with a partition key and sort key that can be different from those on the table.
-2. Local secondary index – An index that has the same partition key as the table, but a different sort key.
+2. **Local secondary index** – An index that has the same partition key as the table, but a different sort key.
 
 ### DynamoDB Streams
 
@@ -119,15 +139,104 @@ Can be deployed locally either
 - AWS CLI
 - API
   - Python: [boto3](https://aws.amazon.com/sdk-for-python/)
-- AWS NoSQL Workbench
+- [AWS NoSQL Workbench](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.html)
+
+---
+
+## Setting Up Env to Work with DynamoDB
+
+### Locally
+
+#### Run on Localstack for DynamoDB
+
+```yaml
+# docker-compose.yml
+version: '3.0'
+
+services:
+  localstack:
+    image: localstack/localstack:latest
+    environment:
+      - AWS_DEFAULT_REGION=us-east-1
+      - EDGE_PORT=4566
+      - SERVICES=dynamodb
+    ports:
+      - '4566:4566'
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+```
+
+```bash
+# command line
+docker compose up
+```
+
+```bash
+# command line
+export AWS_ACCESS_KEY_ID=test
+export AWS_SECRET_ACCESS_KEY=test
+export AWS_REGION=us-east-1
+
+aws --endpoint-url http://localhost:4566 <aws command>
+```
+
+#### DynamoDB Local
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+services:
+  dynamodb-local:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./docker/dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+```
+
+```bash
+# command line
+docker-compose up
+```
+
+```bash
+# command line
+export AWS_ACCESS_KEY_ID=test
+export AWS_SECRET_ACCESS_KEY=test
+export AWS_REGION=us-east-1
+
+aws --endpoint-url http://localhost:8000 <aws command>
+```
+
+
 
 ---
 
 ## AWS CLI
 
+#### Credentials
+
+```bash
+# with keys
+export AWS_ACCESS_KEY_ID=sample-access-key
+export AWS_SECRET_ACCESS_KEY=sample-secret-key
+export AWS_DEFAULT_REGION=eu-west-1
+
+# with profile
+export AWS_PROFILE=profile-name
+export AWS_DEFAULT_REGION=eu-west-1
+```
+
 ### Create a Table
 
-Create a Music Table with Columns for Artist and Song Title
+Create a `Music` table 
+
+- Partition Key - `Artist`
+- Sort Key - `SongTitle`
 
 ```bash
 aws dynamodb create-table \
@@ -138,7 +247,7 @@ aws dynamodb create-table \
     --key-schema \
         AttributeName=Artist,KeyType=HASH \
         AttributeName=SongTitle,KeyType=RANGE \
---provisioned-throughput \
+    --provisioned-throughput \
         ReadCapacityUnits=10,WriteCapacityUnits=5
 ```
 
@@ -201,7 +310,7 @@ Console Output
 ### Insert Data into Table
 
 ```bash
-aws-local dynamodb put-item \
+aws dynamodb put-item \
     --table-name Music  \
     --item '{"Artist": {"S": "No One You Know"}, "SongTitle": {"S": "Call Me Today"}, "AlbumTitle": {"S": "Somewhat Famous"}, "Awards": {"N": "1"}}'
 ```
@@ -220,7 +329,7 @@ Console Output
 ### Read Table
 
 ```bash
-aws-local dynamodb scan --table-name Music
+aws dynamodb scan --table-name Music
 ```
 
 Console Output
@@ -481,5 +590,39 @@ print(items)
 
 ```python
 table.delete()
+```
+
+
+
+## Terraform
+
+#### Docs
+
+- [Resource: aws_dynamodb_table](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dynamodb_table)
+- 
+
+### Music Table with Partition Key and Sort Key
+
+```json
+resource "aws_dynamodb_table" "Music" {
+  name           = "Music"
+  read_capacity  = 5
+  write_capacity = 5
+  hash_key       = "Artist"
+  range_key      = "SongTitle"
+
+  attribute {
+    name = "Artist"
+    type = "S"
+  }
+  attribute {
+    name = "SongTitle"
+    type = "S"
+  }
+  tags = {
+    Name        = "dynamodb-table-1"
+    Environment = "production"
+  }
+}
 ```
 

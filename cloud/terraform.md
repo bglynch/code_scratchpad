@@ -313,6 +313,18 @@ resource "aws_subnet" "subnet_2" {
 
 
 
+---
+
+### Terraform Modules
+
+A *Terraform module*  is a reusable piece of terraform code. You create a module and reuse it in multiple places throughout your code
+
+Open up the *main.tf* file in *modules/services/webserver-cluster* and remove the `provider` definition. Providers should be configured by the user of the module and not by the module itself.
+
+
+
+
+
 #### Terrafrom Files
 
 - .terraform

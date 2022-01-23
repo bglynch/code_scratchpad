@@ -6,10 +6,6 @@
 http://localhost:4566/health
 ```
 
-
-
-
-
 ## Localstack
 
 ```bash
