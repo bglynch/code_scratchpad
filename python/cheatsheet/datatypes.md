@@ -465,11 +465,6 @@ item.name
 
 
 
-
-
-
-
-
-
-
-
+```
+git tag -a v1.0 -m ``"$(date +%F)|<INTEGRATION_ACCOUNT>|$(git rev-parse HEAD)"
+```

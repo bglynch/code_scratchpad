@@ -21,11 +21,12 @@ test_something.py    # test file must be prefixed with 'test'
 cd test_folder/
 
 pytest                                              # Run all tests in a folder
-pytest -q test_file.py                              # Run a specific test file
+pytest test_file.py                                 # Run a specific test file
 pytest test_2_fixtures.py::test_wallet_spend_cash   # Run specific test
 pytest -k test_wallet_add_cash                      # Run specific test
 pytest test_2_fixtures.py -k test_wallet_spend_cash # Run specific test
 
+-k :           only run tests which match the given substring expression.
 ```
 
 See fixtures
@@ -83,12 +84,15 @@ def test_some_function():
 Assert Logs: by default only works for WARNING logs and above
 
 ```python
+#======================================================================= FUNCTION
 def function_that_logs_something():
 	try:
     raise ValueError("Special Error")
   except:
     logger.warning(f"I am logging {str(e)}")
 
+    
+#======================================================================= TESTS
 def test_logged_warning_level(caplog):
   function_that_logs_something()
   assert "I am logging Special Error" == caplog.text
