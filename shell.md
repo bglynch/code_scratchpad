@@ -105,3 +105,10 @@ grep -rwl src/tests --include=\*.py  -e test_log_audit_data_success
 
 ```
 
+#### Tree
+
+```bash
+tree
+tree -L 2
+```
+

@@ -122,12 +122,7 @@ alias check-localstack="curl http://localhost:4566/health | jq"
 
 - Show file extensions
   Finder/Preferences/Advanced
-  <img src="img/show-file-extensions.png" alt="show-file-extensions" style="zoom:50%;" align="left"/>
-
-
-
-
-
+  <img src="img/show-file-extensions.png" alt="show-file-extensions" style="zoom: 50%;" align="left"/>  
 
 
 ### Set up iTerm2
@@ -193,3 +188,38 @@ https://youngstone89.medium.com/how-to-change-font-for-terminal-in-visual-studio
 ---- profiles/keys/Presets..             => natural text editing
 ```
 
+### Typora
+
+```bash
+# set theme to night 
+-- Typora -> Preferences -> Appearence -> Themes -> Theme
+
+# open typora css
+code ~/Library/Application\ Support/abnerworks.Typora
+touch ~/Library/Application\ Support/abnerworks.Typora/themes/base.user.css
+```
+
+<img src="machine_setup.assets/Screenshot 2022-07-11 at 12.45.47.png" alt="Screenshot 2022-07-11 at 12.45.47" style="zoom: 80%;" /> 
+
+```css
+/*  base.user.css */
+
+#write {
+  max-width: calc(100% - 100px);
+  /* background-color: #2b7a4a; */
+}
+
+@media only screen and (min-width: 1400px) {
+	#write {
+		max-width: calc(100% - 100px);
+    /* background-color: #c4a641; */
+	}
+}
+
+@media only screen and (min-width: 1800px) {
+	#write {
+		max-width: calc(100% - 100px);
+    /* background-color: #4183C4; */
+	}
+}
+```
