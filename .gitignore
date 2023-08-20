@@ -1,6 +1,7 @@
 venv-py-3.6
 .DS_Store
 venv/
+.venv/
 .idea/
 .vscode/
 

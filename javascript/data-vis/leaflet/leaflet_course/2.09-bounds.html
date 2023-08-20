@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Quick Start - Leaflet</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+    crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+    crossorigin=""></script>
+
+  <style>
+    .leaflet-popup-content-wrapper,
+    .leaflet-popup-tip {
+      background: white;
+      color: #333;
+      box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
+      border-radius: 0;
+    }
+
+    .leaflet-popup-content {
+      margin: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="mapid" style="width: 600px; height: 600px;"></div>
+
+  <script>
+    var mymap = L.map('mapid')
+      .setView([53.31602494939206, -6.259227097034454], 14);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png', {
+      maxZoom: 18,
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      id: 'mapbox/streets-v11',
+      tileSize: 512,
+      zoomOffset: -1
+    }).addTo(mymap);
+
+    var popup = L.popup()
+
+    var blackIcon = L.icon({
+      iconUrl: 'pin.svg',
+
+      iconSize: [25, 40], // size of the icon
+      //anchor measured from top left
+      iconAnchor: [12.5, 40], // point of the icon which will correspond to marker's location
+      // popup measured form anchor
+      popupAnchor: [0, -30] // point from which the popup should open relative to the iconAnchor
+    });
+
+    let mygeojson = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {},
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -6.259227097034454,
+              53.31602494939206
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {},
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -6.263408660888672,
+                  53.36038708103963
+                ],
+                [
+                  -6.2841796875,
+                  53.360899298155886
+                ],
+                [
+                  -6.305809020996094,
+                  53.349526629253404
+                ],
+                [
+                  -6.308555603027344,
+                  53.34665736860617
+                ],
+                [
+                  -6.307525634765625,
+                  53.33763843506188
+                ],
+                [
+                  -6.291561126708984,
+                  53.332410679983255
+                ],
+                [
+                  -6.2725067138671875,
+                  53.330462921131215
+                ],
+                [
+                  -6.264438629150391,
+                  53.329950338230866
+                ],
+                [
+                  -6.252593994140625,
+                  53.331898120486706
+                ],
+                [
+                  -6.245212554931641,
+                  53.33425584317598
+                ],
+                [
+                  -6.239032745361328,
+                  53.33897089760338
+                ],
+                [
+                  -6.237316131591796,
+                  53.343377977116916
+                ],
+                [
+                  -6.2313079833984375,
+                  53.343377977116916
+                ],
+                [
+                  -6.2299346923828125,
+                  53.34583754438052
+                ],
+                [
+                  -6.23199462890625,
+                  53.357416100347926
+                ],
+                [
+                  -6.263408660888672,
+                  53.36038708103963
+                ]
+              ]
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {},
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -6.313018798828125,
+              53.3559817596747
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {},
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                -6.251134872436523,
+                53.30836500995255
+              ],
+              [
+                -6.252164840698242,
+                53.31205733645252
+              ],
+              [
+                -6.252937316894531,
+                53.316672295505555
+              ],
+              [
+                -6.255855560302734,
+                53.32287606523678
+              ],
+              [
+                -6.258087158203125,
+                53.325746926128325
+              ],
+              [
+                -6.260061264038086,
+                53.328925153953186
+              ],
+              [
+                -6.258602142333984,
+                53.333025743249465
+              ],
+              [
+                -6.257915496826172,
+                53.335690914921614
+              ],
+              [
+                -6.261434555053711,
+                53.33722843821209
+              ]
+            ]
+          }
+        }
+      ]
+    }
+
+    //let addedGeoJSON = L.geoJSON(mygeojson, {
+    //  style: function (feature) {
+    //    return {
+    //      color: "black",
+    //      weight: 0.5
+    //    }
+    //  },
+    //  pointToLayer: function (geoJsonPoint, latlng) {
+    //    return L.marker(latlng, {
+    //      icon: blackIcon
+    //    });
+    //  },
+    //  onEachFeature: function (feature, layer) {
+    //    if (feature.geometry.type == 'Point') {
+    //      layer.bindPopup(feature.geometry.coordinates.join(','))
+    //    }
+    //  }
+    //}).addTo(mymap)
+    //
+    //mymap.fitBounds(addedGeoJSON.getBounds(), {
+    //  padding:[50,50]
+    //})
+
+    var marker1 = L.marker([53.316, -6.26], {
+      icon: blackIcon
+    });
+
+    var marker2 = L.marker([53.5, -6.26], {
+      icon: blackIcon
+    });
+
+    let featureGroup = L.featureGroup([marker1, marker2])
+      .addTo(mymap);
+    
+      mymap.fitBounds(featureGroup.getBounds(), {
+      padding:[50,50]
+    })
+
+
+  </script>
+
+
+
+
+</body>
+
+</html>

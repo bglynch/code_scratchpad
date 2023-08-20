@@ -317,151 +317,148 @@ set.sum()	       # Sums items of the set
 
 ## namedtuple
 
-#### Factory Function for Tuples with Named Fields
-
-- Immutable
-- Like a tuple, but has field names and class name
-- Useful for creating quick class
-
-Load
-
-```python
-from collections import namedtuple
-```
-
-Create
-
-```python
-City = namedtuple('City', 'name country population coordinates')
-City = namedtuple('City', ['name', 'country', 'population', 'coordinates'])
-```
-
-Instanciate
-
-```python
-cork = City('Cork', 'IE', 202000, (-8.48, 51.9))
-cork = City(name='Cork', country='IE', population=202000, coordinates=(-8.48, 51.9))
-
-city_data = ('Cork', 'IE', 202000, (-8.48, 51.9))
-cork = City(*city_data)
-cork = City._make(city_data)
-
-# namedtuple-ception
-LatLong = namedtuple('LatLong', 'lat lng')
-dublin = City('Dublin', 'IE', 1400000, LatLong(-6.26, 53.35))
-```
-
-Query Object
-
-```python
-City._fields
->>> ('name', 'country', 'population', 'coordinates')
-
-cork.name
->>> 'Cork'
-cork._asdict()
->>> {'name': 'Cork', 'country': 'IE', 'population': 202000, 'coordinates': (-8.48, 51.9)}
-
-# namedtuple-ception
-dublin.name
->>> 'Dublin'
-dublin.coordinates.lat
->>> -6.26
-```
-
-Modify Object (this is hacky as a namedtuple is made to be **Immutable**)
-
-```python
-cork = cork._replace(population = 220000)
-```
-
-
-
-
+> #### Factory Function for Tuples with Named Fields
+>
+> - Immutable
+> - Like a tuple, but has field names and class name
+> - Useful for creating quick class
+>
+> ##### Load
+>
+> - ```py
+>   from collections import namedtuple
+>   ```
+>
+> ##### Create
+>
+> - ```py
+>   City = namedtuple('City', 'name country population coordinates')
+>   City = namedtuple('City', ['name', 'country', 'population', 'coordinates'])
+>   ```
+>
+> ###### Instanciate
+>
+> - ```py
+>   cork = City('Cork', 'IE', 202000, (-8.48, 51.9))
+>   cork = City(name='Cork', country='IE', population=202000, coordinates=(-8.48, 51.9))
+>   
+>   city_data = ('Cork', 'IE', 202000, (-8.48, 51.9))
+>   cork = City(*city_data)
+>   cork = City._make(city_data)
+>   
+>   # namedtuple-ception
+>   LatLong = namedtuple('LatLong', 'lat lng')
+>   dublin = City('Dublin', 'IE', 1400000, LatLong(-6.26, 53.35))
+>   ```
+>
+> ###### Query Object
+>
+> ```python
+> City._fields
+> >>> ('name', 'country', 'population', 'coordinates')
+> 
+> cork.name
+> >>> 'Cork'
+> cork._asdict()
+> >>> {'name': 'Cork', 'country': 'IE', 'population': 202000, 'coordinates': (-8.48, 51.9)}
+> 
+> # namedtuple-ception
+> dublin.name
+> >>> 'Dublin'
+> dublin.coordinates.lat
+> >>> -6.26
+> ```
+>
+> ###### Modify Object (this is hacky as a namedtuple is made to be **Immutable**)
+>
+> ```python
+> cork = cork._replace(population = 220000)
+> ```
+>
 
 ## SimpleNamespace
 
-##### A simple [`object`](https://docs.python.org/3/library/functions.html#object) subclass that provides attribute access to its namespace, as well as a meaningful repr.
-
-Load
-
-```python
-from types import SimpleNamespace
-```
-
-Instanciate
-
-```python
-city = SimpleNamespace()
-city = SimpleNamespace(name='Cork', population=220000)
-```
-
-Query Object
-
-```python
-city.__dict__
->>> {'name': 'Cork', 'population': 220000}
-
-city.name
->>> 'Cork'
-
-# namedtuple-ception
-dublin.name
->>> 'Dublin'
-dublin.coordinates.lat
->>> -6.26
-```
-
-
-
-
+> ##### A simple [`object`](https://docs.python.org/3/library/functions.html#object) subclass that provides attribute access to its namespace, as well as a meaningful repr.
+>
+> Load
+>
+> ```python
+> from types import SimpleNamespace
+> ```
+>
+> Instanciate
+>
+> ```python
+> city = SimpleNamespace()
+> city = SimpleNamespace(name='Cork', population=220000)
+> ```
+>
+> Query Object
+>
+> ```python
+> city.__dict__
+> >>> {'name': 'Cork', 'population': 220000}
+> 
+> city.name
+> >>> 'Cork'
+> 
+> # namedtuple-ception
+> dublin.name
+> >>> 'Dublin'
+> dublin.coordinates.lat
+> >>> -6.26
+> ```
+>
 
 ## dataclasses
 
-This module provides a decorator and functions for automatically adding generated [special method](https://docs.python.org/3/glossary.html#term-special-method)s such as [`__init__()`](https://docs.python.org/3/reference/datamodel.html#object.__init__) and [`__repr__()`](https://docs.python.org/3/reference/datamodel.html#object.__repr__) to user-defined classes.
+> This module provides a decorator and functions for automatically adding generated [special method](https://docs.python.org/3/glossary.html#term-special-method)s such as [`__init__()`](https://docs.python.org/3/reference/datamodel.html#object.__init__) and [`__repr__()`](https://docs.python.org/3/reference/datamodel.html#object.__repr__) to user-defined classes.
+>
+> ###### Load
+>
+> ```python
+> from dataclasses import dataclass, make_dataclass, field
+> ```
+>
+> ###### Create
+>
+> ```python
+> @dataclass
+> class InventoryItem:
+>     """Class for keeping track of an item in inventory."""
+>     name: str
+>     unit_price: float
+>     quantity_on_hand: int = 0
+> 
+> InventoryItem = make_dataclass('InventoryItemx',
+>                    [('name', str),
+>                      ('unit_price', float),
+>                     ('quantity_on_hand', int, field(default=0))])
+> 
+> InventoryItem = make_dataclass('InventoryItem',['name', 'unit_price','quantity_on_hand'])
+> ```
+>
+> ###### Instanciate
+>
+> ```python
+> item = InventoryItem('cup', 10.2)
+> item = InventoryItem('cup', 10.2, 5)
+> ```
+>
+> ###### Query Object
+>
+> ```python
+> item.__dict__
+> >>> {'name': 'name', 'unit_price': 10.2, 'quantity_on_hand': 5}
+> item.__repr__()
+> >>> "InventoryItem(name='name', unit_price=10.2, quantity_on_hand=5)"
+> 
+> item.name
+> >>> 'cup'
+> ```
+>
 
-Load
 
-```python
-from dataclasses import dataclass, make_dataclass, field
-```
-
-Create
-
-```python
-@dataclass
-class InventoryItem:
-    """Class for keeping track of an item in inventory."""
-    name: str
-    unit_price: float
-    quantity_on_hand: int = 0
-
-InventoryItem = make_dataclass('InventoryItemx',
-                   [('name', str),
-                     ('unit_price', float),
-                    ('quantity_on_hand', int, field(default=0))])
-
-InventoryItem = make_dataclass('InventoryItem',['name', 'unit_price','quantity_on_hand'])
-```
-
-Instanciate
-
-```python
-item = InventoryItem('cup', 10.2)
-item = InventoryItem('cup', 10.2, 5)
-```
-
-Query Object
-
-```python
-item.__dict__
->>> {'name': 'name', 'unit_price': 10.2, 'quantity_on_hand': 5}
-item.__repr__()
->>> "InventoryItem(name='name', unit_price=10.2, quantity_on_hand=5)"
-
-item.name
->>> 'cup'
-```
 
 
 
