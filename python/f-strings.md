@@ -49,20 +49,20 @@ The number is   10
 The number is   11
 
 # right align text
-In [23]: print(f"{'Hi':>6}")
-    Hi
+In [23]: print(f"{'Hi':>6} World")
+    Hi World
 
 # align to center
-In [24]: print(f"{'Hi':^6}")
-  Hi
+In [24]: print(f"{'Hi':^6} World")
+  Hi   World
   
 # align to left
-In [25]: print(f"{'Hi':<6}")
-Hi
+In [25]: print(f"{'Hi':<6} World")
+Hi     World
 
 # align to left, and choose what the padding symbol is
-In [27]: print(f"{'Hi':_<6}")
-Hi____
+In [27]: print(f"{'Hi':_<6} World")
+Hi____ World
 ```
 
 ###### Datetime

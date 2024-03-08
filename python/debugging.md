@@ -25,7 +25,6 @@
 > print(f"  {GRN}file_name. {BLU} check 3")
 > ```
 >
-> ![Screenshot 2022-06-15 at 18.25.09](debugging.assets/Screenshot 2022-06-15 at 18.25.09.png)
 
 
 
@@ -103,6 +102,18 @@
 > # use ipyhton as breakpoint debugger
 > export PYTHONBREAKPOINT='IPython.core.debugger.set_trace'
 > export PYTHONBREAKPOINT=ipdb.set_trace
+> ```
+>
+> #### Django
+>
+> ```python
+> # update django manage.py settings to use ipdb as default breakpoint() debugger
+> def main():
+>      os.environ.setdefault("PYTHONBREAKPOINT", "ipdb.set_trace")           # <= added
+>      os.environ.setdefault("DJANGO_SETTINGS_MODULE", "example.settings")
+>      try:
+>          from django.core.management import execute_from_command_line
+>          ...
 > ```
 
 

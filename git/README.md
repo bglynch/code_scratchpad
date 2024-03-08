@@ -27,3 +27,25 @@ or
 ```
 git commit --amend --no-edit
 ```
+
+
+
+### Squashing
+
+> ```bash
+> # view commits since branch cut
+> git log --oneline master..CTP-2594-deprecate-global-api
+> 
+> # get number of commits between current branch and master
+> git rev-list --count master..current_branch
+> >> 12
+> 
+> # reset to the branch cut of the current branch
+> git reset --soft HEAD~12
+> 
+> ...stage commits
+> 
+> git commit -m "commit for all the changes"
+> git push origin current_branch --force
+> ```
+

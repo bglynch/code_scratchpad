@@ -1,0 +1,3 @@
+- run terraform
+- run python db_write.py to populate database
+- run python db_read.py to query the database

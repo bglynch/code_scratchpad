@@ -759,3 +759,4 @@ https://www.youtube.com/watch?v=LVgP63BkhKQ&list=LL&index=94&ab_channel=HashiCor
 ###### Talks
 
 - **How to Build Reusable, Composable, Battle tested Terraform Modules,**  by Yevgeniy Brikman, 2017
+- 
