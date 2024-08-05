@@ -11,7 +11,7 @@
 
 ### A and CNAME Recods
 
-> <img src="networking.assets/image-20221202165102639.png" style="zoom:40%;" /> 
+> <img src="assets/image-20221202165102639.png" style="zoom:40%;" /> 
 >
 > **A record** ("address record") - maps a domain name to an IP address
 >
@@ -21,7 +21,7 @@
 
 ## SSL Cetificate
 
-> <img src="networking.assets/image-20221202170906514.png" alt="image-20221202170906514" style="zoom:40%;" /> 
+> <img src="assets/image-20221202170906514.png" alt="image-20221202170906514" style="zoom:40%;" /> 
 
 ### What is SSL (Secure Sockets Layer)
 
@@ -94,7 +94,7 @@
 
 ## IP Packets 
 
-> <img src="networking.assets/image-20221202173141814.png" alt="image-20221202173141814" style="zoom:35%;" /> 
+> <img src="assets/image-20221202173141814.png" alt="image-20221202173141814" style="zoom:35%;" /> 
 >
 > ###### What are they
 >
@@ -112,7 +112,7 @@
 > -  IP packets are like postal letters: 	
 >   - the header is the envelope with all the routing information that's needed by the post office,
 >   -  the payload is the letter that's read only by the recipient.
->     <img src="networking.assets/image-20221202173310476.png" style="zoom:35%;" />
+>     <img src="assets/image-20221202173310476.png" style="zoom:35%;" />
 
 
 

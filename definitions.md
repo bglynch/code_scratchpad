@@ -33,11 +33,11 @@
 
 ###### Open/Closed Principal
 
-> <img src="definitions.assets/1671163421580.jpeg" alt="No alternative text description for this image" style="zoom:67%;" /> 
+> <img src="assets/1671163421580.jpeg" alt="No alternative text description for this image" style="zoom:67%;" /> 
 
 ###### Singleton
 
-> ![No alternative text description for this image](definitions.assets/1671492868989.jpeg) 
+> ![No alternative text description for this image](assets/1671492868989.jpeg) 
 
 
 

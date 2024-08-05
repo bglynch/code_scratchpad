@@ -104,7 +104,35 @@
 
 
 
+```python
+class Device(Protocol):
+ def connect(self) -> None:
+     ...
 
+ def disconnect(self) -> None:
+     ...
+
+ def send_message(self, message_type: MessageType, data: str) -> None:
+     ...
+
+ def status_update(self) -> str:
+     ...
+```
+
+```python
+class HueLight:
+  def connect(self) -> None:
+     print("Connecting Hue light.")
+
+  def disconnect(self) -> None:
+     print("Disconnecting Hue light.")
+
+  def send_message(self, message_type: MessageType, data: str) -> None:
+     print(f"Hue light handling message of type {message_type.name} with data [{data}].")
+
+  def status_update(self) -> str:
+     return "hue_light_status_ok"
+```
 
 
 

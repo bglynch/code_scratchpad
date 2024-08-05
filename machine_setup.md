@@ -130,7 +130,7 @@ alias check-localstack="curl http://localhost:4566/health | jq"
 
 - Show file extensions
   Finder/Preferences/Advanced
-  <img src="img/show-file-extensions.png" alt="show-file-extensions" style="zoom: 50%;" align="left"/>  
+  <img src="assets/show-file-extensions.png" alt="show-file-extensions" style="zoom: 50%;" align="left"/>  
 
 
 ### Set up iTerm2
@@ -139,7 +139,7 @@ Add key binding to open iTerm
 
 - System Preferences/Keyboard/
 
-  <img src="img/Screenshot 2021-07-07 at 21.17.02.png" alt="Screenshot 2021-07-07 at 21.17.02" align="left" style="zoom:50%;" />
+  <img src="assets/Screenshot 2021-07-07 at 21.17.02.png" alt="Screenshot 2021-07-07 at 21.17.02" align="left" style="zoom:50%;" />
 
 ```bash
 # iTerm2
@@ -207,7 +207,7 @@ code ~/Library/Application\ Support/abnerworks.Typora
 touch ~/Library/Application\ Support/abnerworks.Typora/themes/base.user.css
 ```
 
-<img src="machine_setup.assets/Screenshot 2022-07-11 at 12.45.47.png" alt="Screenshot 2022-07-11 at 12.45.47" style="zoom: 80%;" /> 
+<img src="assets/Screenshot 2022-07-11 at 12.45.47.png" alt="Screenshot 2022-07-11 at 12.45.47" style="zoom: 80%;" /> 
 
 ```css
 /*  base.user.css */
