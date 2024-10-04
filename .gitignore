@@ -90,3 +90,6 @@ typings/
 
 # dotenv environment variables file
 .env
+
+# drawio
+*.bkp

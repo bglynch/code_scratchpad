@@ -96,6 +96,11 @@ Each **item** in a table is uniquely identified by a **primary key**.
 1. **Partition Key** : A simple primary key, composed of one attribute known as the *partition key*.
 2. **Partition Key** + **Sort Key**: Referred to as a *composite primary key*, key is composed of two attributes...combination must be Globally unique
 
+   1. Note: A sort key can be constructed as a composite key by hastag(**'#'**) seperation
+
+      Link: [Composite sort key building block](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/data-modeling-blocks.html#data-modeling-blocks-composite)
+
+
 ![dynamo-1](dynamodb.assets/dynamodb-keys.png) 
 
 ##### Design Rule of Thumb
@@ -111,6 +116,7 @@ Each **item** in a table is uniquely identified by a **primary key**.
 
 - [Choosing the Right DynamoDB Partition Key](https://aws.amazon.com/blogs/database/choosing-the-right-dynamodb-partition-key/)
 - [Simulating Amazon DynamoDB unique constraints using transactions](https://aws.amazon.com/blogs/database/simulating-amazon-dynamodb-unique-constraints-using-transactions/)
+- [Schema Design Examples](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/data-modeling-schemas.html)
 
 
 
